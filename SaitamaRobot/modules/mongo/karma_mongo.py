@@ -1,69 +1,193 @@
-from SaitamaRobot import db
-from typing import Dict, List, Union
+import asyncio
+from pyrogram import filters
+from aiohttp import ClientSession
+from Python_ARQ import ARQ
+
+from gojo import pbot as app, BOT_ID
+from gojo.utils.errors import capture_err
+from gojo.utils.permissions import adminsOnly
+from gojo.ex_plugins.dbfunctions import (
+    alpha_to_int,
+    get_karma,
+    get_karmas,
+    int_to_alpha,
+    is_karma_on,
+    karma_off,
+    karma_on,
+    update_karma,
+)
+from gojo.utils.filter_groups import karma_negative_group, karma_positive_group
+from gojo import arq
+
+regex_upvote = r"^((?i)\+|\+\+|\+1|thx|thanx|thanks|pro|cool|good|noice|++|+++|demn|damn👍)$"
+regex_downvote = r"^(\-|\-\-|\-1|👎|noob|weak| )$"
 
 
-karmadb = db.karma
-
-
-async def get_karmas_count() -> dict:
-    chats = karmadb.find({"chat_id": {"$lt": 0}})
-    if not chats:
-        return {}
-    chats_count = 0
-    karmas_count = 0
-    for chat in await chats.to_list(length=1000000):
-        for i in chat['karma']:
-            karmas_count += chat['karma'][i]['karma']
-        chats_count += 1
-    return {
-        "chats_count": chats_count,
-        "karmas_count": karmas_count
-    }
-
-
-async def get_karmas(chat_id: int) -> Dict[str, int]:
-    karma = await karmadb.find_one({"chat_id": chat_id})
-    if karma:
-        karma = karma['karma']
+@app.on_message(
+    filters.text
+    & filters.group
+    & filters.incoming
+    & filters.reply
+    & filters.regex(regex_upvote)
+    & ~filters.via_bot
+    & ~filters.bot
+    & ~filters.edited,
+    group=karma_positive_group,
+)
+@capture_err
+async def upvote(_, message):
+    if not await is_karma_on(message.chat.id):
+        return
+    if not message.reply_to_message.from_user:
+        return
+    if not message.from_user:
+        return
+    if message.reply_to_message.from_user.id == message.from_user.id:
+        return
+    chat_id = message.chat.id
+    user_id = message.reply_to_message.from_user.id
+    user_mention = message.reply_to_message.from_user.mention
+    current_karma = await get_karma(chat_id, await int_to_alpha(user_id))
+    if current_karma:
+        current_karma = current_karma["karma"]
+        karma = current_karma + 1
     else:
-        karma = {}
-    return karma
+        karma = 1
+    new_karma = {"karma": karma}
+    await update_karma(chat_id, await int_to_alpha(user_id), new_karma)
+    await message.reply_text(f"(+)Karma of {user_mention}: {karma}")
 
 
-async def get_karma(chat_id: int, name: str) -> Union[bool, dict]:
-    name = name.lower().strip()
-    karmas = await get_karmas(chat_id)
-    if name in karmas:
-        return karmas[name]
+@app.on_message(
+    filters.text
+    & filters.group
+    & filters.incoming
+    & filters.reply
+    & filters.regex(regex_upvote)
+    & ~filters.via_bot
+    & ~filters.bot
+    & ~filters.edited,
+    group=karma_positive_group,
+)
+@capture_err
+async def upvote(_, message):
+    if not is_karma_on(message.chat.id):
+        return
+    if not message.reply_to_message.from_user:
+        return
+    if not message.from_user:
+        return
+    if message.reply_to_message.from_user.id == message.from_user.id:
+        return
+    chat_id = message.chat.id
+    user_id = message.reply_to_message.from_user.id
+    user_mention = message.reply_to_message.from_user.mention
+    current_karma = await get_karma(chat_id, await int_to_alpha(user_id))
+    if current_karma:
+        current_karma = current_karma["karma"]
+        karma = current_karma + 1
+    else:
+        karma = 1
+    new_karma = {"karma": karma}
+    await update_karma(chat_id, await int_to_alpha(user_id), new_karma)
+    await message.reply_text(f"(+)Karma of {user_mention}: {karma}")
 
 
-async def update_karma(chat_id: int, name: str, karma: dict):
-    name = name.lower().strip()
-    karmas = await get_karmas(chat_id)
-    karmas[name] = karma
-    await karmadb.update_one(
-        {"chat_id": chat_id},
-        {
-            "$set": {
-                "karma": karmas
-            }
-        },
-        upsert=True
-    )
-async def int_to_alpha(user_id: int) -> str:
-    alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]
-    text = ""
-    user_id = str(user_id)
-    for i in user_id:
-        text += alphabet[int(i)]
-    return text
+@app.on_message(
+    filters.text
+    & filters.group
+    & filters.incoming
+    & filters.reply
+    & filters.regex(regex_downvote)
+    & ~filters.via_bot
+    & ~filters.bot
+    & ~filters.edited,
+    group=karma_negative_group,
+)
+@capture_err
+async def downvote(_, message):
+    if not is_karma_on(message.chat.id):
+        return
+    if not message.reply_to_message.from_user:
+        return
+    if not message.from_user:
+        return
+    if message.reply_to_message.from_user.id == message.from_user.id:
+        return
+
+    chat_id = message.chat.id
+    user_id = message.reply_to_message.from_user.id
+    user_mention = message.reply_to_message.from_user.mention
+    current_karma = await get_karma(chat_id, await int_to_alpha(user_id))
+    if current_karma:
+        current_karma = current_karma["karma"]
+        karma = current_karma - 1
+    else:
+        karma = 1
+    new_karma = {"karma": karma}
+    await update_karma(chat_id, await int_to_alpha(user_id), new_karma)
+    await message.reply_text(f"(-)Karma Of {user_mention}: {karma}")
 
 
-async def alpha_to_int(user_id_alphabet: str) -> int:
-    alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"]
-    user_id = ""
-    for i in user_id_alphabet:
-        index = alphabet.index(i)
-        user_id += str(index)
-    user_id = int(user_id)
-    return user_id
+@app.on_message(filters.command("karmastat") & filters.group)
+@capture_err
+async def karma(_, message):
+    chat_id = message.chat.id
+    if not message.reply_to_message:
+        m = await message.reply_text("Analyzing Karma...Will Take 10 Seconds Chotto Matte Kudasai Baka")
+        karma = await get_karmas(chat_id)
+        if not karma:
+            await m.edit("No karma in DB for this chat.")
+            return
+        msg = f"**Karma list of {message.chat.title}:- **\n"
+        limit = 0
+        karma_dicc = {}
+        for i in karma:
+            user_id = await alpha_to_int(i)
+            user_karma = karma[i]["karma"]
+            karma_dicc[str(user_id)] = user_karma
+            karma_arranged = dict(
+                sorted(karma_dicc.items(), key=lambda item: item[1], reverse=True)
+            )
+        if not karma_dicc:
+            await m.edit("No karma in DB for this chat.")
+            return
+        for user_idd, karma_count in karma_arranged.items():
+            if limit > 9:
+                break
+            try:
+                user = await app.get_users(int(user_idd))
+                await asyncio.sleep(0.8)
+            except Exception:
+                continue
+            first_name = user.first_name
+            if not first_name:
+                continue
+            username = user.username
+            msg += f"**{karma_count}**  {(first_name[0:12] + '...') if len(first_name) > 12 else first_name}  `{('@' + username) if username else user_idd}`\n"
+            limit += 1
+        await m.edit(msg)
+    else:
+        user_id = message.reply_to_message.from_user.id
+        karma = await get_karma(chat_id, await int_to_alpha(user_id))
+        karma = karma["karma"] if karma else 0
+        await message.reply_text(f"**Total Points**: __{karma}__")
+
+
+@app.on_message(filters.command("karma") & ~filters.private)
+@adminsOnly("can_change_info")
+async def captcha_state(_, message):
+    usage = "**Usage:**\n/karma [ON|OFF]"
+    if len(message.command) != 2:
+        return await message.reply_text(usage)
+    chat_id = message.chat.id
+    state = message.text.split(None, 1)[1].strip()
+    state = state.lower()
+    if state == "on":
+        await karma_on(chat_id)
+        await message.reply_text("Enabled karma system.")
+    elif state == "off":
+        karma_off(chat_id)
+        await message.reply_text("Disabled karma system.")
+    else:
+        await message.reply_text(usage)
