@@ -89,9 +89,9 @@ def reverse(update: Update, context:CallbackContext):
         location = response.headers.get("Location")
 
         if response != 400:
-            xx = bot.send_message(chat_id, "Finding your waifu/husbando....", reply_to_message_id=rtmid)
+            xx = bot.send_message(chat_id, "Finding It, Now Waito Nee ........", reply_to_message_id=rtmid)
         else:
-            xx = bot.send_message(chat_id, "Sorry I was not able to find this! try again.", reply_to_message_id=rtmid)
+            xx = bot.send_message(chat_id, "OK I was not able to find this! try again with help of GOJO.", reply_to_message_id=rtmid)
             return
 
         os.remove(imagename)
@@ -103,9 +103,9 @@ def reverse(update: Update, context:CallbackContext):
             imgspage = match['similar_images']
 
         if guess and imgspage:
-            xx.edit_text(f"[{guess}]({location})\nFinding your waifu/husbando....", parse_mode='Markdown', disable_web_page_preview=True)
+            xx.edit_text(f"[{guess}]({location})\nFinding It, Now Waito Nee ....", parse_mode='Markdown', disable_web_page_preview=True)
         else:
-            xx.edit_text("Can't Find this unidentified creature...")
+            xx.edit_text("Can't Find this unidentified Hoi bish...")
             return
 
         images = scam(imgspage, lim)
@@ -120,7 +120,7 @@ def reverse(update: Update, context:CallbackContext):
             imglinks.append(lmao)
 
         bot.send_media_group(chat_id=chat_id, media=imglinks, reply_to_message_id=rtmid)
-        xx.edit_text(f"[{guess}]({location})\n[Not Sure But Similar image]({imgspage})", parse_mode='Markdown', disable_web_page_preview=True)
+        xx.edit_text(f"[{guess}]({location})\n[Not Sure But These Somehow Looks Similar]({imgspage})", parse_mode='Markdown', disable_web_page_preview=True)
     except TelegramError as e:
         print(e)
     except Exception as exception:
