@@ -6,30 +6,27 @@ import urllib.request
 import urllib.parse
 from urllib.error import URLError, HTTPError
 from bs4 import BeautifulSoup
-
+import time
 from telegram import InputMediaPhoto, TelegramError
 from telegram import Update
 from telegram.ext import CallbackContext, run_async
 
-from SaitamaRobot import dispatcher
+from horisan import dispatcher
 
-from SaitamaRobot.modules.disable import DisableAbleCommandHandler
-from SaitamaRobot.modules.helper_funcs.alternate import typing_action
+from horisan.modules.disable import DisableAbleCommandHandler
+from horisan.modules.helper_funcs.alternate import typing_action
 
 opener = urllib.request.build_opener()
 useragent = 'Mozilla/5.0 (Linux; Android 6.0.1; SM-G920V Build/MMB29K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.98 Mobile Safari/537.36'
 opener.addheaders = [('User-agent', useragent)]
 
-@run_async
-def reverse(update: Update, context:CallbackContext):
-    if os.path.isfile("okgoogle.png"):
-        os.remove("okgoogle.png")
 
+def reverse(update: Update, context:CallbackContext):
     msg = update.effective_message
     chat_id = update.effective_chat.id
     bot, args = context.bot, context.args
     rtmid = msg.message_id
-    imagename = "okgoogle.png"
+    imagename = str(time.time()) + ".png"
 
     reply = msg.reply_to_message
     if reply:
@@ -40,7 +37,7 @@ def reverse(update: Update, context:CallbackContext):
         elif reply.document:
             file_id = reply.document.file_id
         else:
-            msg.reply_text("Reply to an image or sticker to lookup.")
+            msg.reply_text("Baka! Reply to an image or sticker.")
             return
         image_file = bot.get_file(file_id)
         image_file.download(imagename)
@@ -82,24 +79,23 @@ def reverse(update: Update, context:CallbackContext):
             msg.reply_text(f"{VE}\nPlease try again using http or https protocol.")
             return
     else:
-        msg.reply_markdown("Please reply to a sticker, or an image to search it!\nDo you know that you can search an image with a link too? /reverse [picturelink] <amount>.")
+        msg.reply_markdown("uff baka reply to a sticker, or an image to search it!.")
         return
 
     try:
         searchUrl = 'https://www.google.com/searchbyimage/upload'
         multipart = {'encoded_image': (imagename, open(imagename, 'rb')), 'image_content': ''}
         response = requests.post(searchUrl, files=multipart, allow_redirects=False)
-        fetchUrl = response.headers['Location']
+        location = response.headers.get("Location")
 
         if response != 400:
-            xx = bot.send_message(chat_id, "Chaliyeh chutiyapa karte hai!."
-                                  "\nParsing it, please wait.", reply_to_message_id=rtmid)
+            xx = bot.send_message(chat_id, "Finding your waifu/husbando....", reply_to_message_id=rtmid)
         else:
-            xx = bot.send_message(chat_id, "Google told me to go away.", reply_to_message_id=rtmid)
+            xx = bot.send_message(chat_id, "Sorry I was not able to find this! try again.", reply_to_message_id=rtmid)
             return
 
         os.remove(imagename)
-        match = ParseSauce(fetchUrl + "&hl=en")
+        match = ParseSauce(location + "&hl=en")
         guess = match['best_guess']
         if match['override'] and not match['override'] == '':
             imgspage = match['override']
@@ -107,15 +103,15 @@ def reverse(update: Update, context:CallbackContext):
             imgspage = match['similar_images']
 
         if guess and imgspage:
-            xx.edit_text(f"[{guess}]({fetchUrl})\nNoobde log waifu ka nam tak nahi pata..", parse_mode='Markdown', disable_web_page_preview=True)
+            xx.edit_text(f"[{guess}]({location})\nFinding your waifu/husbando....", parse_mode='Markdown', disable_web_page_preview=True)
         else:
-            xx.edit_text("Couldn't find anything.")
+            xx.edit_text("Can't Find this unidentified creature...")
             return
 
         images = scam(imgspage, lim)
         if len(images) == 0:
-            xx.edit_text(f"[{guess}]({fetchUrl})\n[Yeh lo chutiyo karo protecc]({imgspage})"
-                          "\nCouldn't fetch any images.", parse_mode='Markdown', disable_web_page_preview=True)
+            xx.edit_text(f"[{guess}]({location})\n\n[similar images....!]({imgspage})"
+                          , parse_mode='Markdown', disable_web_page_preview=True)
             return
 
         imglinks = []
@@ -124,7 +120,7 @@ def reverse(update: Update, context:CallbackContext):
             imglinks.append(lmao)
 
         bot.send_media_group(chat_id=chat_id, media=imglinks, reply_to_message_id=rtmid)
-        xx.edit_text(f"[{guess}]({fetchUrl})\n[Visually similar images]({imgspage})", parse_mode='Markdown', disable_web_page_preview=True)
+        xx.edit_text(f"[{guess}]({location})\n[Not Sure But Similar image]({imgspage})", parse_mode='Markdown', disable_web_page_preview=True)
     except TelegramError as e:
         print(e)
     except Exception as exception:
@@ -151,7 +147,7 @@ def ParseSauce(googleurl):
 
     for similar_image in soup.findAll('input', {'class': 'gLFyf'}):
             url = 'https://www.google.com/search?tbm=isch&q=' + urllib.parse.quote_plus(similar_image.get('value'))
-            results['similar_images'] = url
+            results['These Somehow Looks Similar... '] = url
 
     for best_guess in soup.findAll('div', attrs={'class':'r5a77d'}):
         results['best_guess'] = best_guess.get_text()
@@ -180,9 +176,17 @@ def scam(imgspage, lim):
 
     return imglinks
 
+__help__ = """
+ •`/reverse` :- reply to a sticker, or an image to search it!
+Do you know that you can search an image with a link too? /reverse picturelink <amount>. 
+alternative commands :-
+• `/r`, `/grs`, `/pp`
+"""
+__mod_name__ = "【ʀᴇᴠᴇʀꜱᴇ】"
 
 REVERSE_HANDLER = DisableAbleCommandHandler(
-    "reverse", reverse, pass_args=True, admin_ok=True
+    ["p", "g" , "s" ,"pp", "grs" , "r","reverse"], reverse, pass_args=True, admin_ok=True, run_async=True
 )
 
 dispatcher.add_handler(REVERSE_HANDLER)
+
