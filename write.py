@@ -13,7 +13,7 @@ async def handwriting(_, message):
     await pbot.send_chat_action(message.chat.id, "upload_photo")
     await message.reply_photo(hand, caption = "Made by [Gojo](t.me/gojoxprobot)")
 
-__mod_name__ = "【ʜᴀɴᴅᴡʀɪᴛᴇ】"
+__mod_name__ = "【Hαη∂wяιтє】"
 __help__ = """
 •`/write [text / reply to text]`
 """
