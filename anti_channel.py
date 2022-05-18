@@ -7,7 +7,7 @@ import html
 from ..modules.sql.antichannel_sql import antichannel_status, disable_antichannel, enable_antichannel
 
 
-@horicmd(command="antichannel", group=100)
+@gojocmd(command="antichannel", group=100)
 @user_admin(AdminPerms.CAN_RESTRICT_MEMBERS)
 def set_antichannel(update: Update, context: CallbackContext):
     message = update.effective_message
@@ -41,9 +41,9 @@ def eliminate_channel(update: Update, context: CallbackContext):
         bot.ban_chat_sender_chat(sender_chat_id=sender_chat.id, chat_id=chat.id)
         
 __help__ = """
-【Anti Channel】
+【AηтιCнαηηєℓ】
 × try antichannel to restrict people texting from channel! 
 × person wont be able to text as an channel anymore. 
 × command can be used as : /antichannel off/on"""
 
-__mod_name__ = "AηтιCнαηηєℓ"
+__mod_name__ = "【AηтιCнαηηєℓ】"
