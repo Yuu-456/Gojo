@@ -15,7 +15,7 @@ PHOTO = "https://telegra.ph/file/37fbf569f9b0bf5fdd809.jpg"
 @register(pattern=("/kaisen"))
 async def awake(event):
     TEXT = f"**Welcome to [ Aηιмє Kαιѕєη ☆ᴀᴄɢ☆](https://t.me/Anime_Kaisen_ACG)** \n\n"
-    TEXT += "**◈ Aηιмє Kαιѕєη is an anime based Community with a motive to spread Knowledge nd Awareness for all OF it's Members . Go through the channel and join the Community if it draws your attention. ◈"
+    TEXT += "**◈ Aηιмє Kαιѕєη is an anime based Community with a motive to spread Knowledge nd Awareness for all OF it's Members . Join the Group if it draws your attention. ◈"
     BUTTON = [
         [
             
