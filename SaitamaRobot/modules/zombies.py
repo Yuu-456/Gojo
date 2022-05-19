@@ -6,7 +6,7 @@ from telethon.errors import ChatAdminRequiredError, UserAdminInvalidError
 from telethon.tl.functions.channels import EditBannedRequest
 from telethon.tl.types import ChatBannedRights, ChannelParticipantsAdmins
 
-from SaitamaRobot import telethn, OWNER_ID, DEV_USERS, DRAGONS, DEMONS
+from Gojo import telethn, OWNER_ID, DEV_USERS, DRAGONS, DEMONS
 
 # =================== CONSTANT ===================
 
@@ -49,25 +49,25 @@ async def is_administrator(user_id: int, message):
 
 
 
-@telethn.on(events.NewMessage(pattern=f"^[!/]zombies ?(.*)"))
-async def zombies(event):
-    """ For .zombies command, list all the zombies in a chat. """
+@telethn.on(events.NewMessage(pattern=f"^[!/]curses ?(.*)"))
+async def curses(event):
+    """ For .curse command, list all the curses in a chat. """
 
     con = event.pattern_match.group(1).lower()
     del_u = 0
-    del_status = "No Deleted Accounts Found, Group Is Clean."
+    del_status = "No Cursed Deleted Accounts Found, Group Is Clean."
 
     if con != "clean":
-        find_zombies = await event.respond("Searching For Zombies...")
+        find_curses = await event.respond("Searching For Curses...")
         async for user in event.client.iter_participants(event.chat_id):
 
             if user.deleted:
                 del_u += 1
                 await sleep(1)
         if del_u > 0:
-            del_status = f"Found **{del_u}** Zombies In This Group.\
-            \nClean Them By Using - `/zombies clean`"
-        await find_zombies.edit(del_status)
+            del_status = f"Found This Many**{del_u}** Curses In This Group.\
+            \nClean Them By Using - `/Curse clean`"
+        await find_curses.edit(del_status)
         return
 
     # Here laying the sanity check
@@ -84,7 +84,7 @@ async def zombies(event):
         await event.respond("I Am Not An Admin Here!")
         return
 
-    cleaning_zombies = await event.respond("Cleaning Zombies...")
+    cleaning_curses = await event.respond("Killing Curses...")
     del_u = 0
     del_a = 0
 
@@ -95,7 +95,7 @@ async def zombies(event):
                     EditBannedRequest(event.chat_id, user.id, BANNED_RIGHTS)
                 )
             except ChatAdminRequiredError:
-                await cleaning_zombies.edit("I Don't Have Ban Rights In This Group.")
+                await cleaning_curses.edit("Gojo Does't Have Banning Rights In This Group ,Give Me That And I Will Show You The Ultimate Genocide.")
                 return
             except UserAdminInvalidError:
                 del_u -= 1
@@ -104,17 +104,17 @@ async def zombies(event):
             del_u += 1
 
     if del_u > 0:
-        del_status = f"Cleaned `{del_u}` Zombies"
+        del_status = f"Cleaned `{del_u}` Curses"
 
     if del_a > 0:
         del_status = f"Cleaned `{del_u}` Zombies \
-        \n`{del_a}` Zombie Admin Accounts Are Not Removed!"
+        \n`{del_a}` Cursed Admin Accounts Are Not Removed By Gojo!"
 
-    await cleaning_zombies.edit(del_status)
+    await cleaning_curses.edit(del_status)
 
 __help__ = """
   ADMINS ONLY
-  • `/zombies` :- searches deleted accounts
-  • `/zombies clean` :- removes deleted accounts from the group.
+  • `/curses` :- searches deleted accounts
+  • `/curses clean` :- removes deleted accounts from the group.
 """
-__mod_name__ = "Zombies"
+__mod_name__ = "Curses"
