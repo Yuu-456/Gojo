@@ -5,14 +5,14 @@ import re
 from sys import argv
 from typing import Optional
 
-from SaitamaRobot import (ALLOW_EXCL, CERT_PATH, DONATION_LINK, LOGGER,
+from Gojo import (ALLOW_EXCL, CERT_PATH, DONATION_LINK, LOGGER,
                           OWNER_ID, PORT, SUPPORT_CHAT, TOKEN, URL, WEBHOOK,
                           dispatcher, StartTime, telethn, updater, pbot)
 # needed to dynamically load modules
 # NOTE: Module order is not guaranteed, specify that in the config file!
-from SaitamaRobot.modules import ALL_MODULES
-from SaitamaRobot.modules.helper_funcs.chat_status import is_user_admin
-from SaitamaRobot.modules.helper_funcs.misc import paginate_modules
+from Gojo.modules import ALL_MODULES
+from Gojo.modules.helper_funcs.chat_status import is_user_admin
+from Gojo.modules.helper_funcs.misc import paginate_modules
 from telegram import (InlineKeyboardButton, InlineKeyboardMarkup, ParseMode,
                       Update)
 from telegram.error import (BadRequest, ChatMigrated, NetworkError,
@@ -53,7 +53,7 @@ def get_readable_time(seconds: int) -> str:
 
 PM_START_TEXT = """
 Hello, {}
-ɪ'ᴍ ʀʏᴏᴍᴇɴ ꜱᴜᴋᴜɴᴀ ᴛʜᴇ ᴄᴜʀꜱᴇ ᴋɪɴɢ.
+I'am Your Lovely Gojo Satoru The Strongest Jujutsu Socerer #No1.
 
 ɪ'ᴍ ᴀɴ ᴀɴɪᴍᴇ ᴛʜᴇᴍᴇᴅ ɢʀᴏᴜᴘ ᴍᴀɴᴀɢᴇᴍᴇɴᴛ ʙᴏᴛ ꜰʀᴏᴍ ᴊᴜᴊᴜᴛꜱᴜ ᴋᴀɪꜱᴇɴ!!
 
@@ -63,7 +63,7 @@ You can find the list of available commands with /help
 HELP_STRINGS = """
 
 
-Have a look at the following for an idea of some of the things I can help you with.
+Have a look at the following for an idea of some of the things I wanna help you with.
 
 *Main* commands available:
  • /help: PM's you this message.
@@ -80,7 +80,7 @@ And the following:
     dispatcher.bot.first_name, ""
     if not ALLOW_EXCL else "\nAll commands can either be used with / or !.\n")
 
-SAITAMA_IMG = "https://telegra.ph/file/f18ac5dd7c77213308b28.jpg"
+GOJO_IMG = "https://telegra.ph/file/f18ac5dd7c77213308b28.jpg"
 
 DONATE_STRING = """Heya, glad to hear you want to donate!
 You can donate to the original writer of the Base code, Paul
