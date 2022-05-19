@@ -220,9 +220,7 @@ def start(update: Update, context: CallbackContext):
                              url="https://t.me/sukunaRobotlogs")
                      ],
                      [
-                         InlineKeyboardButton(
-                             text="💾 Source Code",
-                             url="https://github.com/Eren2op/RYOMEN-SUKUNA-ROBOT")
+                        
                      ]]))
     else:
         update.effective_message.reply_text(
@@ -344,7 +342,7 @@ def get_help(update: Update, context: CallbackContext):
 
     elif len(args) >= 2 and any(args[1].lower() == x for x in HELPABLE):
         module = args[1].lower()
-        text = "Here is the available help for the *{}* module:\n".format(HELPABLE[module].__mod_name__) \
+        text = "Here is the available help for the *{}* which  module:\n".format(HELPABLE[module].__mod_name__) \
                + HELPABLE[module].__help__
         send_help(
             chat.id, text,
@@ -404,7 +402,7 @@ def settings_button(update: Update, context: CallbackContext):
             chat_id = mod_match.group(1)
             module = mod_match.group(2)
             chat = bot.get_chat(chat_id)
-            text = "*{}* has the following settings for the *{}* module:\n\n".format(escape_markdown(chat.title),
+            text = "*{}* has the following settings for the *{}* Which was one of Gojo's module:\n\n".format(escape_markdown(chat.title),
                                                                                      CHAT_SETTINGS[module].__mod_name__) + \
                    CHAT_SETTINGS[module].__chat_settings__(chat_id, user.id)
             query.message.reply_text(
@@ -421,7 +419,7 @@ def settings_button(update: Update, context: CallbackContext):
             curr_page = int(prev_match.group(2))
             chat = bot.get_chat(chat_id)
             query.message.reply_text(
-                "Hi there! There are quite a few settings for {} - go ahead and pick what "
+                "Hi there! You Gojo FanThere are quite a few settings for {} by Gojo- go ahead and pick what "
                 "you're interested in.".format(chat.title),
                 reply_markup=InlineKeyboardMarkup(
                     paginate_modules(
@@ -432,7 +430,7 @@ def settings_button(update: Update, context: CallbackContext):
             next_page = int(next_match.group(2))
             chat = bot.get_chat(chat_id)
             query.message.reply_text(
-                "Hi there! There are quite a few settings for {} - go ahead and pick what "
+                "Hi there! You Gojo Fan. There are quite a few settings for {} by Gojo- go ahead and pick what "
                 "you're interested in.".format(chat.title),
                 reply_markup=InlineKeyboardMarkup(
                     paginate_modules(
@@ -442,7 +440,7 @@ def settings_button(update: Update, context: CallbackContext):
             chat_id = back_match.group(1)
             chat = bot.get_chat(chat_id)
             query.message.reply_text(
-                text="Hi there! There are quite a few settings for {} - go ahead and pick what "
+                text="Hi there You Gojo Fan! There are quite a few settings for  {} by Gojo - go ahead and pick what "
                 "you're interested in.".format(escape_markdown(chat.title)),
                 parse_mode=ParseMode.MARKDOWN,
                 reply_markup=InlineKeyboardMarkup(
@@ -452,14 +450,14 @@ def settings_button(update: Update, context: CallbackContext):
         bot.answer_callback_query(query.id)
         query.message.delete()
     except BadRequest as excp:
-        if excp.message == "Message is not modified":
+        if excp.message == "Message is not modified so now Gojo Will Kill You ":
             pass
-        elif excp.message == "Query_id_invalid":
+        elif excp.message == "Query_id_invalid bru- ":
             pass
-        elif excp.message == "Message can't be deleted":
+        elif excp.message == "Message can't be deleted by Gojo ":
             pass
         else:
-            LOGGER.exception("Exception in settings buttons. %s",
+            LOGGER.exception("Exception in MANAGE BUTTON [ Settings button ] by - Gojo. %s",
                              str(query.data))
 
 
@@ -472,7 +470,7 @@ def get_settings(update: Update, context: CallbackContext):
     # ONLY send settings in PM
     if chat.type != chat.PRIVATE:
         if is_user_admin(chat, user.id):
-            text = "Click here to get this chat's settings, as well as yours."
+            text = "Click here to Manage this group, as well as yours - by Gojo Bot."
             msg.reply_text(
                 text,
                 reply_markup=InlineKeyboardMarkup([[
@@ -482,7 +480,7 @@ def get_settings(update: Update, context: CallbackContext):
                             context.bot.username, chat.id))
                 ]]))
         else:
-            text = "Click here to check your settings."
+            text = "Click here to check your settings managed by Gojo."
 
     else:
         send_settings(chat.id, user.id, True)
@@ -501,7 +499,7 @@ def donate(update: Update, context: CallbackContext):
 
         if OWNER_ID != 254318997 and DONATION_LINK:
             update.effective_message.reply_text(
-                "You can also donate to the person currently running me "
+                "You can also donate to the  The Author [who wrote my character] ! "
                 "[here]({})".format(DONATION_LINK),
                 parse_mode=ParseMode.MARKDOWN)
 
@@ -514,10 +512,10 @@ def donate(update: Update, context: CallbackContext):
                 disable_web_page_preview=True)
 
             update.effective_message.reply_text(
-                "I've PM'ed you about donating to my creator!")
+                "I've PM'ed you about donating to the [The Author] who wrote my character !")
         except Unauthorized:
             update.effective_message.reply_text(
-                "Contact me in PM first to get donation information.")
+                "Contact me in PM first to get donation[basically simping] information.")
 
 
 def migrate_chats(update: Update, context: CallbackContext):
@@ -543,10 +541,10 @@ def main():
 
     if SUPPORT_CHAT is not None and isinstance(SUPPORT_CHAT, str):
         try:
-            dispatcher.bot.sendMessage(f"@{SUPPORT_CHAT}", "[Gambare Gambare!](https://telegra.ph/file/be66ab5f18fa9c2657fd8.mp4)", parse_mode=ParseMode.MARKDOWN)
+            dispatcher.bot.sendMessage(f"@{SUPPORT_CHAT}", "[BUKKORUSO!](https://telegra.ph/file/c29660fb4605e06ceac2d.mp4)", parse_mode=ParseMode.MARKDOWN)
         except Unauthorized:
             LOGGER.warning(
-                "Bot isnt able to send message to support_chat, go and check!")
+                "Gojo isnt able to send message to Gojo'S support_chat, Now Run and check in support!")
         except BadRequest as e:
             LOGGER.warning(e.message)
 
