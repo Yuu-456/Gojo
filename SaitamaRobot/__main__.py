@@ -80,7 +80,7 @@ And the following:
     dispatcher.bot.first_name, ""
     if not ALLOW_EXCL else "\nAll commands can either be used with / or !.\n")
 
-GOJO_IMG = "https://telegra.ph/file/f18ac5dd7c77213308b28.jpg"
+GOJO_IMG = "https://telegra.ph/file/b5ff8036eccb595e921d7.png"
 
 DONATE_STRING = """Heya, glad to hear you want to donate!
 You can donate to the original writer of the Base code, Paul
