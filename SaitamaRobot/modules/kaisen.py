@@ -29,4 +29,4 @@ __help__ = """
  
 ❂ /arcade: Get information about the Arcade Netowrk ! using it in groups may create promotion so we don't support using it in groups."""
    
-__mod_name__ = "Aηιмє Kαιѕєη"
+__mod_name__ = "꧁༺WɛɛɮAʀƈǟɖɛ༻꧂"
